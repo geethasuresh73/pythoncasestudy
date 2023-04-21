@@ -1,5 +1,7 @@
 # 1)Load the data
-# 2)Make sure your data set is cleaned enough, so we for example don't include in results with empty/null "titles" and/or "number of pages" is greater than 20 and "publishing year" is after 1950. State your filters clearly.
+# 2)Make sure your data set is cleaned enough, so we for example don't include in results with
+# empty/null "titles" and/or "number of pages" is greater than 20 and "publishing year" is
+# after 1950. State your filters clearly.
 # 3)Run the following queries with the preprocessed/cleaned dataset:
 # 1. Select all "Harry Potter" books
 # 2. Get the book with the most pages
@@ -44,6 +46,14 @@ def dataprocessing():
             dfgenre = dfcleantitle[dfcleantitle['genres'].notnull()]
             dfgenre = dfgenre.dropna(subset=['genres'],inplace=True)
             dfgenre = dfgenre[dfgenre['genres'].str.len()>0]
+            dfnop=dfgenre[dfgenre['number_of_pages'].notnull()]
+            dfnop = dfnop[dfnop['number_of_pages'].int>20]
+            dfpub = dfgenre[dfgenre['number_of_pages'].notnull()]
+            dfnop = dfnop[dfnop['number_of_pages'].int > 20]
+    # "number of pages" is greater
+    # than
+    # 20 and "publishing year" is
+    # # after 1950. State your filters clearly.
     except Exception as e:
             #dfHarryPotter.to_csv(fileOutDirectory + "/" + "HarryPotter.csv")
 

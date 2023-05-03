@@ -15,6 +15,7 @@ import configparser as cp
 import pandas as pd
 import logging
 import os
+
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 loggingFormat = '%(asctime)-15s %(message)s'
@@ -82,31 +83,53 @@ def dataprocessing():
             dfmaxpg.to_csv('../../../resources/maxpage.csv')
     # Authors with most written books (assuming author in first position in the array, "key" field and each
     # row is a different book)
-            dft5auth=['','','','','']
-            dfauth=''
-            dfcount=0
+
             logger.info('writing distinct authors')
             dfauthlist=dfpub[['authors','title']]
-            # dfpub['authors'].str[0].astype(str).str.slice(18,100).map(lambda x:str(x)[:-2]).to_csv('../../../resources/pubtemp.csv')
-            dfauthlist['authors']=dfauthlist['authors'].str[0].astype(str).str.slice(18, 100).map(lambda x: str(x)[:-2])
-            dfauthlist[['title','authors']].groupby(['authors']).size().nlargest(5).to_csv('../../../resources/top5authors.csv')
-                        for dfauth in dfpub['authors'].distinct('authors'):
-                dfauthloopcount=dfpub['authors'].count()
-                for i in range[0,4]:
-                       if (dfauth not in dft5auth) and (dfcount < dfauthloopcount):
-                           dfcount=dfauthloopcount
-                           dfauth=dfpub['authors']
-                       dft5auth[i]=dfauth['key'][9,10]
-                       dft5auth[i].to_csv('../../../resources/top5auth.csv')
+            dfauthlist['authors']=dfauthlist['authors'].str[0].astype(str).str.slice(18, 100)\
+                .map(lambda x: str(x)[:-2])
+            dfauthlist[['title','authors']].groupby(['authors']).size().nlargest(5).\
+                to_csv('../../../resources/top5authors.csv')
+
+# *******
+            logger.info('writing genres')
+            dfgenres = dfpub[['genres']]
+            dfgenres['genres'] = dfgenres['genres'].str[0].astype(str)
+            dfgenres[['genres']].groupby(['genres']).size().nlargest(5).to_csv('../../../resources/genres.csv')
+#           dfauthlist[['genres']].groupby(['genres']).\
+#                   to_csv('../../../resources/genres.csv')
+# ************
+    # 4.Find the top 5 genres with most books
+            logger.info('going to average number of pages')
+            dfavepgsum = dfpub.copy()
+            # dfavepgsum = dfpub['number_of_pages']
+            dfave=str(round(dfavepgsum['number_of_pages'].sum()/dfavepgsum['number_of_pages'].count()))
+            file2 = open('../../../resources/averagepage.csv', 'w')
+            file2.write(dfave)
+            file2.close()
 
 
-    # "number of pages" is greater
-    # than
-    # 20 and "publishing year" is
-    # # after 1950. State your filters clearly.
+            # dfavepgsum['number_of_pages'] = dfavepgsum['number_of_pages'].astype(int)
+            # logger.info('going to sum number of pages')
+            # dfavepgsum['number_of_pages'] = dfavepgsum[['number_of_pages']].groupby(['number_of_pages']).sum(['number_of_pages'])
+            # logger.info('sum of pages is ***',dfavepgsum)
+            # dfavepgsum[-1].to_csv('../../../resources/sumnumberofpages.csv')
+
+
+            # dfavepgsum['number_of_pages'].groupby(['number_of_pages']).sum()
+            # logger.info('sum of number of pages is ',dfavepgsum)
+            # dfavepgcount = dfpub[['number_of_pages']]
+            # dfavepgcount['number_of_pages'].groupby(['number_of_pages']).count()
+            # logger.info('count of books is',dfavepgcount)
+         #   dfavepg=dfavepgsum/dfavepgcount
+         #   dfavepg.to_csv('../../../resources/avepage.csv')
+   # 5. Get the avg. number of pages
+
+    # 6. Per publish year, get the number of authors that published at least one book
+
+    # "number of pages" is greater than and "publishing year" is after 1950. State your filters clearly.
     except Exception as e:
-            #dfHarryPotter.to_csv(fileOutDirectory + "/" + "HarryPotter.csv")
-
+        # dfHarryPotter.to_csv(fileOutDirectory + "/" + "HarryPotter.csv")
         logger.error(e)
 
 output=dataprocessing()

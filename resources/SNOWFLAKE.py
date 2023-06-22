@@ -214,4 +214,37 @@ group by 1
 order by 2 desc
 limit 10;
 
+----------------
+Snowpark - parquet file
+----------------
+# The Snowpark package is required for Python Worksheets.
+# You can add more packages by selecting them using the Packages control and then importing them.
 
+import snowflake.snowpark as snowpark
+from snowflake.snowpark.functions import col
+
+
+def main(session: snowpark.Session):
+    # Your code goes here, inside the "main" handler.
+    # tableName = 'information_schema.packages'
+    # dataframe = session.table(tableName).filter(col("language") == 'python')
+
+    # # Print a sample of the dataframe to standard output.
+    # dataframe.show()
+    session.sql("use database dbdemo;")
+    session.sql("use schema dbdemo.raw;")
+    session.sql("use role dbadmin;")
+    # Return value will appear in the Results tab.
+    stagename = "dbdemo.raw.dbstage"
+    filename = "yellow_tripdata_2023-01.parquet"
+
+    # read the staged file
+    dfRaw = session.read.parquet(f"@{stagename}/{filename}")
+
+    # copy the data into a table
+    rawtable = "Snowpark_Temp"
+    dfRaw.write.save_as_table(rawtable)
+    return "success"
+----------------------
+Snowpark parquet
+----------------------

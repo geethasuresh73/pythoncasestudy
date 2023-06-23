@@ -248,3 +248,40 @@ def main(session: snowpark.Session):
 ----------------------
 Snowpark parquet
 ----------------------
+--6/22/2023
+-------------
+# The Snowpark package is required for Python Worksheets.
+# You can add more packages by selecting them using the Packages control and then importing them.
+
+import snowflake.snowpark as snowpark
+from snowflake.snowpark.functions import col
+
+
+def main(session: snowpark.Session):
+    # Your code goes here, inside the "main" handler.
+    # tableName = 'information_schema.packages'
+    # dataframe = session.table(tableName).filter(col("language") == 'python')
+    # Print a sample of the dataframe to standard output.
+    # dataframe.show()
+    session.use_warehouse("generic")
+    session.use_database("dbdemo")
+    session.use_schema("dbdemo.raw")
+    session.use_role("dba")
+    session.use_warehouse("generic")
+
+    # Return value will appear in the Results tab.
+    stagename = "dbdemo.raw.dbstage"
+    filename = "parquetexample.parquet"
+
+    # read the staged file
+    dfRaw = session.read.parquet(f"@{stagename}/{filename}")
+
+    # coDBDEMO.RAW.SNOWPARK_TEMP1DBDEMO.RAW.SNOWPARK_TEMP1py the data into a table
+    session.sql("drop table if exists dbdemo.raw.SNOWPARK_TEMP1;")
+    rawtable = "Snowpark_Temp2"
+    dfRaw.count()
+    dfRaw.write.mode('append').save_as_table(rawtable)
+    return dfRaw
+-----------
+--6/22/2023
+----------
